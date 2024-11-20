@@ -1,0 +1,36 @@
+name: "Nakama Data Sync Action"
+description: "The action synchronizes data between servers."
+author: rudyatkinson
+runs: 
+  using: node16
+  main: src/main.js
+branding: 
+  icon: arrow-up-circle
+  color: blue
+inputs:
+  nakama-dev-server-url:
+    required: true
+    description: "The URL of the Nakama development server, used for interacting with the development environment during the deployment process."
+  nakama-prod-server-url:
+    required: true
+    description: "The URL of the Nakama production server, where live environments are hosted and updated."
+  nakama-dev-system-id:
+    required: true
+    description: "A unique identifier for the Nakama development system, used for authentication and environment-specific configurations."
+  nakama-dev-auth-token:
+    required: true
+    description: "The authentication token for the Nakama development environment, required for secure API access."
+  nakama-prod-auth-token:
+    required: true
+    description: "The authentication token for the Nakama production environment, enabling secure updates to the live system."
+  nakama-system-login-id:
+    required: true
+    description: "The system login ID used for accessing and managing Nakama server environments during automated workflows."
+  configuration-key:
+    required: false
+    default: 'Configuration'
+    description: "(Optional) A key representing the configuration settings, defaulting to 'Configuration' for environment-specific customization."
+  config-versions-key:
+    required: false
+    default: 'ConfigVersions'
+    description: "(Optional) A key representing versioned configurations, defaulting to 'ConfigVersions' used for tracking and applying specific versions of configurations."

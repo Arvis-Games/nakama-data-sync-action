@@ -1,0 +1,25 @@
+{
+  "name": "nakama-data-sync-action",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Arvis-Games/nakama-data-sync-action.git"
+  },
+  "keywords": [],
+  "author": "rudyatkinson",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Arvis-Games/nakama-data-sync-action/issues"
+  },
+  "homepage": "https://github.com/Arvis-Games/nakama-data-sync-action#readme",
+  "dependencies": {
+    "@actions/core": "^1.10.0",
+    "@actions/github": "^5.1.1",
+    "node-fetch": "2.0"
+  }
+}
