@@ -17,6 +17,7 @@ async function run() {
     const devConfigVersions = await GetStorageData(nakamaDevUrl, devBearerToken, configurationKey, configVersionsKey, nakamaDevSystemUserId);
 
     const versions = JSON.parse(devConfigVersions.objects[0].value).versions;
+    let configVersionData = devConfigVersions.objects[0].value;
 
     for (const key in versions)
     {
@@ -46,6 +47,8 @@ async function run() {
             await PutStorageData(nakamaProdUrl, prodBearerToken, configurationKey, dataKey, data);
         }
     }
+
+    await PutStorageData(nakamaProdUrl, prodBearerToken, configurationKey, configVersionsKey, configVersionData);
 }
 
 async function AuthNakama(nakamaUrl, authToken) {
