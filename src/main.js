@@ -20,7 +20,8 @@ async function run() {
 
     for (const key in versions)
     {
-        var values = versions[key];
+        let values = versions[key];
+        let moveableData = [];
         for (const value in values)
         {
             let dataKey = key + '_' + values[value];
@@ -48,8 +49,7 @@ async function run() {
 }
 
 async function AuthNakama(nakamaUrl, authToken) {
-
-    var authUrl = 'https://' + nakamaUrl + '/v2/account/authenticate/device?create=true&username=SYSTEM';
+    let authUrl = 'https://' + nakamaUrl + '/v2/account/authenticate/device?create=true&username=SYSTEM';
 
     const requestHeaders = new Headers();
     requestHeaders.append('Content-Type', 'application/json');
