@@ -7,6 +7,7 @@ const nakamaDevSystemUserId = core.getInput('nakama-dev-system-id', { required: 
 const nakamaDevAuthToken = core.getInput('nakama-dev-auth-token', { required: true});
 const nakamaProdAuthToken = core.getInput('nakama-prod-auth-token', { required: true});
 const nakamaSystemLoginId = core.getInput('nakama-system-login-id', { required: true});
+const specificDatasToTransfer = core.getInput('specific-datas-to-transfer', { required: false});
 const configurationKey = core.getInput('configuration-key', {required: true});
 const configVersionsKey = core.getInput('config-versions-key', {required: true});
 
@@ -19,6 +20,7 @@ async function run() {
     const versions = JSON.parse(devConfigVersions.objects[0].value).versions;
     let configVersionData = devConfigVersions.objects[0].value;
 
+    let versionTasks = [];
     for (const key in versions)
     {
         let values = versions[key];
@@ -32,23 +34,27 @@ async function run() {
 
             moveableData.push(dataKey);
 
-            let dataJson = await GetStorageData(nakamaDevUrl, devBearerToken, configurationKey, dataKey, nakamaDevSystemUserId);
-            let data = '';
-            if (dataJson.objects && dataJson.objects.length > 0 && dataJson.objects[0].value)
-            {
-                data = dataJson.objects[0].value;
-            }
-            else
-            {
-                console.error(`Unexpected data structure or missing data for key: ${dataKey}`, dataJson);
-                continue;
-            }
-
-            await PutStorageData(nakamaProdUrl, prodBearerToken, configurationKey, dataKey, data);
+            versionTasks.push(TryGetDataThenPut(nakamaDevUrl, nakamaProdUrl, devBearerToken, prodBearerToken, dataKey));
         }
     }
 
+    await Promise.all(versionTasks);
     await PutStorageData(nakamaProdUrl, prodBearerToken, configurationKey, configVersionsKey, configVersionData);
+
+    if (specificDatasToTransfer.length > 0)
+    {
+        let dataToTransferArr = specificDatasToTransfer.split(',');
+        let tasks = [];
+
+        for (const data of dataToTransferArr)
+        {
+            console.log(`Looking for data to transfer ${data}`);
+
+            tasks.push(TryGetDataThenPut(nakamaDevUrl, nakamaProdUrl, devBearerToken, prodBearerToken, data));
+        }
+
+        await Promise.all(tasks);
+    }
 }
 
 async function AuthNakama(nakamaUrl, authToken) {
@@ -147,6 +153,23 @@ async function PutStorageData(nakamaUrl, bearerToken, collection, key, data) {
     } catch (error) {
         console.error('Error during PutStorageData:', error);
     }
+}
+
+async function TryGetDataThenPut(nakamaDevUrl, prodDevUrl, devBearerToken, prodBearerToken, dataKey)
+{
+    let dataJson = await GetStorageData(nakamaDevUrl, devBearerToken, configurationKey, dataKey, nakamaDevSystemUserId);
+    let data = '';
+    if (dataJson.objects && dataJson.objects.length > 0 && dataJson.objects[0].value)
+    {
+        data = dataJson.objects[0].value;
+    }
+    else
+    {
+        console.error(`Unexpected data structure or missing data for key: ${dataKey}`, dataJson);
+        return;
+    }
+
+    await PutStorageData(nakamaProdUrl, prodBearerToken, configurationKey, dataKey, data);
 }
 
 run();
