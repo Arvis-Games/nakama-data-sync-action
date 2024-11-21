@@ -26,6 +26,10 @@ inputs:
   nakama-system-login-id:
     required: true
     description: "The system login ID used for accessing and managing Nakama server environments during automated workflows."
+  specific-datas-to-transfer:
+    required: false
+    default: ''
+    description: "Specific data keys to transfer."
   configuration-key:
     required: false
     default: 'Configuration'
